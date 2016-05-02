@@ -8,7 +8,10 @@
 #include <stdio.h>
 
 const char PORT[] = "3490";
+const int MAXDATASIZE = 1000;
 const int BACKLOG = 20;
+
+char buf[MAXDATASIZE];
 
 int setupServer() {
   struct addrinfo hints, *rez;
@@ -62,15 +65,20 @@ int main() {
 
   printf("Listening for connections\n");
 
+  sockaddr_storage their_addr;
+  socklen_t sin_size = sizeof their_addr;
+
   while(true) {
-    sockaddr_storage their_addr;
-    socklen_t sin_size = sizeof their_addr;
 
     int new_fd = accept(server, (struct sockaddr *)&their_addr, &sin_size);
     if (new_fd == -1) {
-      perror("accept");
       continue;
     }
+
+    int numbytes = recv(new_fd, buf, MAXDATASIZE-1, 0);
+    buf[numbytes] = '\0';
+
+    printf("%s connected to server\n", buf);
   }
 
   return 0;
