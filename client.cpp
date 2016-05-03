@@ -1,10 +1,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netdb.h> // getaddrinfo
-#include <unistd.h> // close
-#include <string.h> // memset
-#include <stdlib.h> // exit
+#include <netdb.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 const char PORT[] = "3490";
@@ -56,7 +56,14 @@ int main(int argc, char *argv[]) {
 
   printf("Connected to server\n");
 
+  char msg[MAXDATASIZE];
+
   send(server, argv[1], sizeof(argv[1]), 0);
+
+  while(true) {
+    fgets(msg, sizeof msg, stdin);
+    send(server, msg, strlen(msg), 0);
+  }
 
   close(server);
 
